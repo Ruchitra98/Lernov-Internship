@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Happy Birthday Celebration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+        }
+        input[type="date"] {
+            padding: 10px;
+            font-size: 1.2em;
+            border: 2px solid yellow;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+            text-align: center;
+            z-index: 1000;
+            display: none;
+        }
+        .popup h1 {
+            font-size: 2.5em;
+            color: #ff4081;
+            margin-bottom: 10px;
+        }
+        .popup button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #ff4081;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .balloon {
+            position: absolute;
+            width: 50px;
+            height: 70px;
+            background-color: #ff4081;
+            border-radius: 50%;
+            animation: floatUp 8s ease-in infinite, sway 4s ease-in-out infinite;
+        }
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 10px;
+            height: 20px;
+            background-color: #ff4081;
+            border-radius: 50%;
+        }
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 23px;
+            width: 4px;
+            height: 50px;
+            background-color: #fff;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh);
+            }
+            100% {
+                transform: translateY(-100vh);
+            }
+        }
+        @keyframes sway {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(20px);
+            }
+        }
+        .popper {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ffeb3b;
+            border-radius: 50%;
+            animation: fall 5s linear infinite;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="date" id="dobInput" placeholder="Enter your date of birth">
+    </div>
+
+    <!-- Happy Birthday Pop-Up -->
+    <div class="popup" id="birthdayPopup">
+        <h1>Happy Birthday!</h1>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        const dobInput = document.getElementById('dobInput');
+        const birthdayPopup = document.getElementById('birthdayPopup');
+
+        dobInput.addEventListener('change', function () {
+            // Show the birthday pop-up
+            birthdayPopup.style.display = 'block';
+
+            // Start the celebration
+            celebrateBirthday();
+        });
+
+        function closePopup() {
+            // Hide the pop-up
+            birthdayPopup.style.display = 'none';
+        }
+
+        function celebrateBirthday() {
+            // Add balloons
+            for (let i = 0; i < 20; i++) {
+                createBalloon();
+            }
+
+            // Add party poppers
+            for (let i = 0; i < 100; i++) {
+                createPopper();
+            }
+        }
+
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.classList.add('balloon');
+            balloon.style.left = Math.random() * window.innerWidth + 'px';
+            balloon.style.animationDuration = Math.random() * 8 + 4 + 's';
+            balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            document.body.appendChild(balloon);
+
+            // Remove balloon after animation ends
+            balloon.addEventListener('animationend', () => {
+                balloon.remove();
+                createBalloon(); // Create a new balloon
+            });
+        }
+
+        function createPopper() {
+            const popper = document.createElement('div');
+            popper.classList.add('popper');
+            popper.style.left = Math.random() * window.innerWidth + 'px';
+            popper.style.animationDuration = Math.random() * 5 + 3 + 's';
+            popper.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            document.body.appendChild(popper);
+
+            // Remove popper after animation ends
+            popper.addEventListener('animationend', () => {
+                popper.remove();
+                createPopper(); // Create new popper
+            });
+        }
+    </script>
+</body>
