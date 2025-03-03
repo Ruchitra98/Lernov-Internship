@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday Celebration</title>
     <style>
         * {
@@ -11,44 +12,50 @@
         }
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #000;
+            background: linear-gradient(45deg, #ff4081, #ffeb3b, #03a9f4, #4caf50);
+            background-size: 400% 400%;
             color: white;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
             overflow: hidden;
+            animation: bgAnimation 10s infinite alternate;
+        }
+        @keyframes bgAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
         }
         .container {
             text-align: center;
-        }
-        input[type="date"] {
-            padding: 10px;
-            font-size: 1.2em;
-            border: 2px solid yellow;
-            border-radius: 5px;
-            background-color: #333;
-            color: white;
-        }
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
+            background: rgba(255, 255, 255, 0.2);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
-            text-align: center;
-            z-index: 1000;
-            display: none;
         }
-        .popup h1 {
-            font-size: 2.5em;
-            color: #ff4081;
-            margin-bottom: 10px;
+        input[type="text"], input[type="date"], textarea {
+            padding: 10px;
+            font-size: 1em;
+            margin: 10px 0;
+            border: 2px solid yellow;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
         }
-        .popup button {
+        button {
             padding: 10px 20px;
             font-size: 1em;
             background-color: #ff4081;
@@ -83,13 +90,14 @@
             width: 4px;
             height: 50px;
             background-color: #fff;
+            animation: swayString 4s ease-in-out infinite;
         }
         @keyframes floatUp {
             0% {
-                transform: translateY(100vh);
+                transform: translateY(100vh) rotate(0deg);
             }
             100% {
-                transform: translateY(-100vh);
+                transform: translateY(-100vh) rotate(360deg);
             }
         }
         @keyframes sway {
@@ -100,7 +108,15 @@
                 transform: translateX(20px);
             }
         }
-        .popper {
+        @keyframes swayString {
+            0%, 100% {
+                transform: rotate(-5deg);
+            }
+            50% {
+                transform: rotate(5deg);
+            }
+        }
+        .confetti {
             position: absolute;
             width: 10px;
             height: 10px;
@@ -116,76 +132,203 @@
                 transform: translateY(100vh);
             }
         }
+        .cake {
+            position: relative;
+            margin-top: 20px;
+        }
+        .candle {
+            width: 10px;
+            height: 40px;
+            background-color: #fff;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .flame {
+            width: 8px;
+            height: 8px;
+            background-color: #ffeb3b;
+            border-radius: 50%;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: flicker 0.5s infinite alternate;
+        }
+        @keyframes flicker {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.5;
+            }
+        }
+        .wishes {
+            margin-top: 20px;
+        }
+        .wishes ul {
+            list-style: none;
+            padding: 0;
+        }
+        .wishes ul li {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        .music-controls {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <input type="date" id="dobInput" placeholder="Enter your date of birth">
+        <h1 id="birthdayMessage">Happy Birthday, <span id="namePlaceholder">[Name]</span>!</h1>
+        <input type="text" id="nameInput" placeholder="Enter the birthday person's name">
+        <input type="date" id="birthdayDate" placeholder="Enter the birthday date">
+        <button onclick="startCelebration()">Start Celebration</button>
+
+        <!-- Cake with Candles -->
+        <div class="cake" id="cake">
+            <div class="candle">
+                <div class="flame"></div>
+            </div>
+        </div>
+
+        <!-- Virtual Birthday Card -->
+        <div class="wishes">
+            <h2>Leave a Birthday Wish</h2>
+            <textarea id="wishInput" placeholder="Write your wish here..."></textarea>
+            <button onclick="addWish()">Submit Wish</button>
+            <ul id="wishList"></ul>
+        </div>
+
+        <!-- Gift Suggestions -->
+        <div class="gift-suggestions">
+            <h2>Gift Suggestions</h2>
+            <ul>
+                <li>Personalized Mug</li>
+                <li>Customized Photo Frame</li>
+                <li>Birthday Cake</li>
+                <li>Gift Card</li>
+            </ul>
+        </div>
+
+        <!-- Music Controls -->
+        <div class="music-controls">
+            <button id="muteButton" onclick="toggleMute()">Mute</button>
+        </div>
     </div>
 
-    <!-- Happy Birthday Pop-Up -->
-    <div class="popup" id="birthdayPopup">
-        <h1>Happy Birthday!</h1>
-        <button onclick="closePopup()">Close</button>
-    </div>
+    <!-- Happy Birthday Song -->
+    <audio id="birthdaySong" src="happy-birthday-song.mp3" loop></audio>
 
     <script>
-        const dobInput = document.getElementById('dobInput');
-        const birthdayPopup = document.getElementById('birthdayPopup');
+        const nameInput = document.getElementById('nameInput');
+        const birthdayDate = document.getElementById('birthdayDate');
+        const namePlaceholder = document.getElementById('namePlaceholder');
+        const birthdaySong = document.getElementById('birthdaySong');
+        const cake = document.getElementById('cake');
+        const wishInput = document.getElementById('wishInput');
+        const wishList = document.getElementById('wishList');
+        const muteButton = document.getElementById('muteButton');
 
-        dobInput.addEventListener('change', function () {
-            // Show the birthday pop-up
-            birthdayPopup.style.display = 'block';
+        let wishes = [];
+        let isMuted = false;
 
-            // Start the celebration
-            celebrateBirthday();
-        });
+        function startCelebration() {
+            const name = nameInput.value;
+            const date = new Date(birthdayDate.value);
+            const today = new Date();
 
-        function closePopup() {
-            // Hide the pop-up
-            birthdayPopup.style.display = 'none';
+            if (name) {
+                namePlaceholder.textContent = name;
+            }
+
+            if (date > today) {
+                startCountdown(date);
+            }
+
+            // Start animations and music
+            createBalloons();
+            createConfetti();
+            birthdaySong.play();
+
+            // Add candle blow-out effect
+            cake.addEventListener('click', () => {
+                const flame = document.querySelector('.flame');
+                flame.style.display = 'none';
+                setTimeout(() => {
+                    alert('Happy Birthday! 🎉');
+                }, 500);
+            });
         }
 
-        function celebrateBirthday() {
-            // Add balloons
+        function startCountdown(targetDate) {
+            const interval = setInterval(() => {
+                const now = new Date();
+                const diff = targetDate - now;
+
+                if (diff <= 0) {
+                    clearInterval(interval);
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                console.log(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+            }, 1000);
+        }
+
+        function createBalloons() {
             for (let i = 0; i < 20; i++) {
-                createBalloon();
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                balloon.style.left = Math.random() * window.innerWidth + 'px';
+                balloon.style.animationDuration = Math.random() * 8 + 4 + 's';
+                balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                document.body.appendChild(balloon);
             }
+        }
 
-            // Add party poppers
+        function createConfetti() {
             for (let i = 0; i < 100; i++) {
-                createPopper();
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.animationDuration = Math.random() * 5 + 3 + 's';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                document.body.appendChild(confetti);
             }
         }
 
-        function createBalloon() {
-            const balloon = document.createElement('div');
-            balloon.classList.add('balloon');
-            balloon.style.left = Math.random() * window.innerWidth + 'px';
-            balloon.style.animationDuration = Math.random() * 8 + 4 + 's';
-            balloon.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            document.body.appendChild(balloon);
+        function addWish() {
+            const wish = wishInput.value.trim();
+            if (wish) {
+                wishes.push(wish);
+                wishInput.value = '';
+                updateWishList();
+            }
+        }
 
-            // Remove balloon after animation ends
-            balloon.addEventListener('animationend', () => {
-                balloon.remove();
-                createBalloon(); // Create a new balloon
+        function updateWishList() {
+            wishList.innerHTML = '';
+            wishes.forEach((wish) => {
+                const li = document.createElement('li');
+                li.textContent = wish;
+                wishList.appendChild(li);
             });
         }
 
-        function createPopper() {
-            const popper = document.createElement('div');
-            popper.classList.add('popper');
-            popper.style.left = Math.random() * window.innerWidth + 'px';
-            popper.style.animationDuration = Math.random() * 5 + 3 + 's';
-            popper.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            document.body.appendChild(popper);
-
-            // Remove popper after animation ends
-            popper.addEventListener('animationend', () => {
-                popper.remove();
-                createPopper(); // Create new popper
-            });
+        function toggleMute() {
+            isMuted = !isMuted;
+            birthdaySong.muted = isMuted;
+            muteButton.textContent = isMuted ? 'Unmute' : 'Mute';
         }
     </script>
 </body>
+</html>
